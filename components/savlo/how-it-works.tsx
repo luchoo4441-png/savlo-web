@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useRef } from "react"
 import { Reveal } from "./reveal"
 
 type Step = {
@@ -62,11 +65,18 @@ export function HowItWorks() {
           {steps.map((s, i) => (
             <li key={s.number}>
               <Reveal delay={i * 120}>
-                <StepRow step={s} reverse={i === 1} />
+                <ScrollScale>
+                  <StepRow step={s} reverse={i === 1} />
+                </ScrollScale>
               </Reveal>
             </li>
           ))}
         </ol>
+
+        {/* Subtle hint for users on first visit */}
+        <p className="mt-16 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground/60">
+          Scroll — steps focus as they reach the center
+        </p>
       </div>
     </section>
   )
@@ -466,5 +476,88 @@ function DotIcon() {
       <span className="absolute inset-0 animate-ping rounded-full bg-primary/60" />
       <span className="relative h-2 w-2 rounded-full bg-primary" />
     </span>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/*              Scroll-driven focus: current item scales up,                  */
+/*              items above/below shrink and fade progressively.              */
+/* -------------------------------------------------------------------------- */
+
+function ScrollScale({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    // Respect users who prefer no motion — render at full focus, no animation.
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+
+    if (reduceMotion) {
+      el.style.transform = "scale(1)"
+      el.style.opacity = "1"
+      return
+    }
+
+    let rafId = 0
+    let ticking = false
+
+    // Easing for a calm, editorial feel (ease-out-quart).
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 4)
+
+    const update = () => {
+      ticking = false
+      const rect = el.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      const itemCenter = rect.top + rect.height / 2
+      const viewportCenter = vh / 2
+
+      // Falloff distance — how far from center before the item is fully "at rest".
+      // Using ~70% of the viewport height gives neighbors a visible but secondary presence.
+      const falloff = vh * 0.7
+      const distance = Math.abs(itemCenter - viewportCenter)
+      const raw = 1 - Math.min(distance / falloff, 1) // 1 at center, 0 at/after falloff
+      const p = easeOut(raw)
+
+      // Scale: 0.9 → 1.03, Opacity: 0.45 → 1
+      const scale = 0.9 + p * 0.13
+      const opacity = 0.45 + p * 0.55
+
+      el.style.transform = `scale(${scale.toFixed(4)})`
+      el.style.opacity = opacity.toFixed(4)
+    }
+
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      rafId = window.requestAnimationFrame(update)
+    }
+
+    // Initial paint + listeners.
+    update()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      if (rafId) window.cancelAnimationFrame(rafId)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        transformOrigin: "center center",
+        transition: "transform 220ms cubic-bezier(0.22,1,0.36,1), opacity 220ms cubic-bezier(0.22,1,0.36,1)",
+        willChange: "transform, opacity",
+      }}
+    >
+      {children}
+    </div>
   )
 }
