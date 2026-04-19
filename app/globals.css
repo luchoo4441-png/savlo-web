@@ -1,0 +1,410 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Savlo brand tokens — aligned 1:1 with the Flutter app spec
+ * (see savlo-ai-context.md). Exact hex values instead of oklch
+ * approximations so the web + app stay perceptually identical.
+ */
+
+:root {
+  /* Surfaces */
+  --background: #0D1B2A;            /* deepNavy — canvas */
+  --foreground: #F7F3EE;            /* creamWhite — primary text */
+  --surface: #132233;               /* cards, modals, bottom sheets */
+  --surface-2: #1C3049;             /* elevated cards, inputs */
+
+  /* Card tokens (shadcn shape) */
+  --card: #1C3049;
+  --card-foreground: #F7F3EE;
+  --popover: #132233;
+  --popover-foreground: #F7F3EE;
+
+  /* Brand */
+  --primary: #4CAF8A;               /* mintGreen — brand */
+  --primary-foreground: #0D1B2A;
+  --primary-hover: #A8D8B9;         /* softMint — hover/highlight */
+
+  --secondary: #1C3049;
+  --secondary-foreground: #F7F3EE;
+
+  --muted: #1C3049;
+  --muted-foreground: #8FA3B1;      /* softGray — descriptions/hints */
+
+  --accent: #F4A261;                /* warmAmber — attention without panic */
+  --accent-foreground: #0D1B2A;
+
+  /* Feedback */
+  --destructive: #F47070;           /* soft error — never bright red */
+  --destructive-foreground: #F7F3EE;
+  --info: #2E6DA4;                  /* trustBlue */
+
+  /* Chrome — 8% white borders, 3% black overlays (per spec) */
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(76, 175, 138, 0.55);
+
+  /* Chart tokens — brand-first */
+  --chart-1: #4CAF8A;
+  --chart-2: #F4A261;
+  --chart-3: #A8D8B9;
+  --chart-4: #8FA3B1;
+  --chart-5: #F7F3EE;
+
+  /* Radii — aligned to app (pill buttons, card 20–24px, phone 38px) */
+  --radius: 1.25rem;                /* 20px — cards */
+  --radius-sm: 0.75rem;             /* 12px — chips/badges */
+  --radius-phone: 2.375rem;         /* 38px — phone frames / preview */
+
+  --sidebar: #132233;
+  --sidebar-foreground: #F7F3EE;
+  --sidebar-primary: #4CAF8A;
+  --sidebar-primary-foreground: #0D1B2A;
+  --sidebar-accent: #1C3049;
+  --sidebar-accent-foreground: #F7F3EE;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(76, 175, 138, 0.55);
+}
+
+/* Savlo is dark-native: .dark mirrors :root */
+.dark {
+  --background: #0D1B2A;
+  --foreground: #F7F3EE;
+  --surface: #132233;
+  --surface-2: #1C3049;
+  --card: #1C3049;
+  --card-foreground: #F7F3EE;
+  --popover: #132233;
+  --popover-foreground: #F7F3EE;
+  --primary: #4CAF8A;
+  --primary-foreground: #0D1B2A;
+  --primary-hover: #A8D8B9;
+  --secondary: #1C3049;
+  --secondary-foreground: #F7F3EE;
+  --muted: #1C3049;
+  --muted-foreground: #8FA3B1;
+  --accent: #F4A261;
+  --accent-foreground: #0D1B2A;
+  --destructive: #F47070;
+  --destructive-foreground: #F7F3EE;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: rgba(76, 175, 138, 0.55);
+  --chart-1: #4CAF8A;
+  --chart-2: #F4A261;
+  --chart-3: #A8D8B9;
+  --chart-4: #8FA3B1;
+  --chart-5: #F7F3EE;
+  --sidebar: #132233;
+  --sidebar-foreground: #F7F3EE;
+  --sidebar-primary: #4CAF8A;
+  --sidebar-primary-foreground: #0D1B2A;
+  --sidebar-accent: #1C3049;
+  --sidebar-accent-foreground: #F7F3EE;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(76, 175, 138, 0.55);
+}
+
+@theme inline {
+  /* Fonts — DM Sans for UI/body, Fraunces for emotional display */
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: var(--radius-sm);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* DM Sans stylistic alternates — keep subtle */
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* --- Calm microinteractions --- */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes drawLine {
+  from { stroke-dashoffset: var(--dash, 1000); }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.35; }
+  50% { opacity: 0.65; }
+  100% { opacity: 0.35; }
+}
+
+@keyframes tileIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes sceneTextIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    filter: blur(6px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+/* Antimetal-style halftone arc dots */
+@keyframes dotIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(2px);
+  }
+  55% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: var(--dot-o, 1);
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Voice waveform bar oscillation */
+@keyframes waveBar {
+  0%, 100% { transform: scaleY(0.18); }
+  50% { transform: scaleY(1); }
+}
+
+/* Mic pulsing ring — uses mint green at 60% */
+@keyframes micPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 138, 0.6);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 0 28px rgba(76, 175, 138, 0);
+    opacity: 0;
+  }
+}
+
+/* Blinking caret for voice transcript */
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* Subtle rotation for export file rings */
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Savlo entrance: calm breath — soft 4.5s in/out */
+@keyframes calmBreath {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+}
+
+/* Halo dot: assembles from scatter into place, then idles */
+@keyframes haloAssemble {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--sx, 0), var(--sy, 0), 0) scale(0.3);
+    filter: blur(3px);
+  }
+  60% {
+    filter: blur(0);
+  }
+  100% {
+    opacity: var(--dot-o, 0.9);
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Curved arrow stroke draw */
+@keyframes arrowDraw {
+  from { stroke-dashoffset: 260; opacity: 0; }
+  20%  { opacity: 1; }
+  to   { stroke-dashoffset: 0; opacity: 1; }
+}
+
+/* Callout pill: float in from nearby with soft settle */
+@keyframes pillIn {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--px, 0), var(--py, 0), 0) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Phone: rise + subtle rotate settle */
+@keyframes phoneIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) rotate(var(--from-rot, 0deg)) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(var(--to-rot, 0deg)) scale(1);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fadeUp 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 900ms ease-out forwards;
+}
+.animate-float-soft {
+  animation: floatSoft 6s ease-in-out infinite;
+}
+.animate-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+/* Staggered utility */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-700 { animation-delay: 700ms; }
+
+/* Subtle grain/noise overlay for the dark surface */
+.bg-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Soft calm button interaction */
+.btn-calm {
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 400ms ease, background-color 400ms ease,
+              border-color 400ms ease, opacity 300ms ease;
+}
+.btn-calm:hover {
+  transform: scale(1.02);
+}
+.btn-calm:active {
+  transform: scale(0.98);
+}
+
+/* Card calm hover */
+.card-calm {
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 500ms ease, box-shadow 500ms ease,
+              background-color 500ms ease;
+}
+.card-calm:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklch, var(--primary) 35%, var(--border));
+  box-shadow: 0 1px 0 0 color-mix(in oklch, var(--primary) 10%, transparent) inset,
+              0 20px 60px -30px color-mix(in oklch, var(--primary) 25%, transparent);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
