@@ -61,22 +61,20 @@ export function HowItWorks() {
           </h2>
         </Reveal>
 
-        <ol className="mt-20 flex flex-col gap-24 sm:gap-28">
+        {/* 
+          Each step uses scroll-driven scaling: the centered step scales up dramatically
+          while neighbors shrink — inspired by Superpower's healthgap page.
+          We skip Reveal here since it conflicts with ScrollScale's inline styles.
+        */}
+        <ol className="mt-20 flex flex-col gap-32 sm:gap-40">
           {steps.map((s, i) => (
             <li key={s.number}>
-              <Reveal delay={i * 120}>
-                <ScrollScale>
-                  <StepRow step={s} reverse={i === 1} />
-                </ScrollScale>
-              </Reveal>
+              <ScrollScale index={i}>
+                <StepRow step={s} reverse={i === 1} />
+              </ScrollScale>
             </li>
           ))}
         </ol>
-
-        {/* Subtle hint for users on first visit */}
-        <p className="mt-16 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground/60">
-          Scroll — steps focus as they reach the center
-        </p>
       </div>
     </section>
   )
@@ -480,11 +478,17 @@ function DotIcon() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*              Scroll-driven focus: current item scales up,                  */
-/*              items above/below shrink and fade progressively.              */
+/*              Scroll-driven focus: current item scales up dramatically,     */
+/*              items above/below shrink and fade — like Superpower healthgap */
 /* -------------------------------------------------------------------------- */
 
-function ScrollScale({ children }: { children: React.ReactNode }) {
+function ScrollScale({
+  children,
+  index,
+}: {
+  children: React.ReactNode
+  index: number
+}) {
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -502,59 +506,55 @@ function ScrollScale({ children }: { children: React.ReactNode }) {
       return
     }
 
-    let rafId = 0
-    let ticking = false
-
     // Easing for a calm, editorial feel (ease-out-quart).
     const easeOut = (t: number) => 1 - Math.pow(1 - t, 4)
 
     const update = () => {
-      ticking = false
       const rect = el.getBoundingClientRect()
       const vh = window.innerHeight || document.documentElement.clientHeight
       const itemCenter = rect.top + rect.height / 2
       const viewportCenter = vh / 2
 
       // Falloff distance — how far from center before the item is fully "at rest".
-      // Using ~70% of the viewport height gives neighbors a visible but secondary presence.
-      const falloff = vh * 0.7
+      // A shorter falloff creates more dramatic focus/blur distinction.
+      const falloff = vh * 0.55
       const distance = Math.abs(itemCenter - viewportCenter)
       const raw = 1 - Math.min(distance / falloff, 1) // 1 at center, 0 at/after falloff
       const p = easeOut(raw)
 
-      // Scale: 0.9 → 1.03, Opacity: 0.45 → 1
-      const scale = 0.9 + p * 0.13
-      const opacity = 0.45 + p * 0.55
+      // DRAMATIC scale range: 0.72 → 1.08 (Superpower-like)
+      const scale = 0.72 + p * 0.36
+      // Opacity: 0.35 → 1
+      const opacity = 0.35 + p * 0.65
+      // Slight blur for out-of-focus items
+      const blur = (1 - p) * 2
 
       el.style.transform = `scale(${scale.toFixed(4)})`
       el.style.opacity = opacity.toFixed(4)
+      el.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : "none"
     }
 
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      rafId = window.requestAnimationFrame(update)
+    // Use a single RAF loop instead of per-event RAF
+    let running = true
+    const loop = () => {
+      if (!running) return
+      update()
+      requestAnimationFrame(loop)
     }
-
-    // Initial paint + listeners.
-    update()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("resize", onScroll, { passive: true })
+    loop()
 
     return () => {
-      window.removeEventListener("scroll", onScroll)
-      window.removeEventListener("resize", onScroll)
-      if (rafId) window.cancelAnimationFrame(rafId)
+      running = false
     }
-  }, [])
+  }, [index])
 
   return (
     <div
       ref={ref}
+      className="scroll-scale-item"
       style={{
         transformOrigin: "center center",
-        transition: "transform 220ms cubic-bezier(0.22,1,0.36,1), opacity 220ms cubic-bezier(0.22,1,0.36,1)",
-        willChange: "transform, opacity",
+        willChange: "transform, opacity, filter",
       }}
     >
       {children}
