@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { Reveal } from "./reveal"
+import { Spotlight } from "./spotlight"
 
 const principles = [
   {
@@ -137,8 +138,10 @@ function PrincipleCard({
           willChange: "transform, opacity",
         }}
       >
+        <Spotlight size={520} />
+
         {/* Shield icon with subtle indicator dot */}
-        <div className="mb-4 flex items-start gap-4">
+        <div className="relative mb-4 flex items-start gap-4">
           <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-surface-2/60 transition-colors duration-500 group-hover:border-primary/40 group-hover:bg-surface-2/80">
             <svg
               viewBox="0 0 24 24"
@@ -172,7 +175,7 @@ function PrincipleCard({
         </div>
 
         {/* Description with opacity/translate reveal on scroll/hover */}
-        <p className="ml-14 text-sm leading-relaxed text-muted-foreground transition-all duration-500 group-hover:text-muted-foreground/90 sm:text-base">
+        <p className="relative ml-14 text-sm leading-relaxed text-muted-foreground transition-all duration-500 group-hover:text-muted-foreground/90 sm:text-base">
           {principle.body}
         </p>
 

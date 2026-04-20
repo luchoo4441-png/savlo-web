@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { DM_Sans, Fraunces } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { ScrollProgress } from "@/components/savlo/scroll-progress"
 import "./globals.css"
 
 const dmSans = DM_Sans({
@@ -43,6 +44,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${fraunces.variable} bg-background`}
     >
       <body className="font-sans antialiased text-foreground">
+        <ScrollProgress />
         {children}
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

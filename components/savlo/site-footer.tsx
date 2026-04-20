@@ -94,7 +94,7 @@ export function SiteFooter() {
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                      className="link-underline text-[13px] text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {l.label}
                     </Link>
