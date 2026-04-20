@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { AppStoreBadge, GooglePlayBadge } from "./store-badges"
@@ -12,6 +13,7 @@ const nav = [
 ]
 
 export function SiteHeader() {
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -20,6 +22,13 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  // Active detection: exact match for "/", prefix match otherwise (so "/blog/x" highlights "Blog").
+  const isActive = (href: string) => {
+    if (href.startsWith("/#")) return false
+    if (href === "/") return pathname === "/"
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   return (
     <header
@@ -30,22 +39,51 @@ export function SiteHeader() {
           : "bg-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <Logo />
-          <span className="font-serif text-lg tracking-tight">Savlo</span>
+      <div
+        className={cn(
+          "mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 transition-[height] duration-500",
+          scrolled ? "h-14" : "h-16",
+        )}
+      >
+        <Link
+          href="/"
+          className="group flex items-center gap-2"
+          aria-label="Savlo — ir al inicio"
+        >
+          <Logo scrolled={scrolled} />
+          <span
+            className={cn(
+              "font-serif tracking-tight transition-all duration-500",
+              scrolled ? "text-[17px]" : "text-lg",
+            )}
+          >
+            Savlo
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav
+          className="hidden items-center gap-8 md:flex"
+          aria-label="Primary"
+        >
+          {nav.map((item) => {
+            const active = isActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                data-active={active || undefined}
+                className={cn(
+                  "link-underline focus-ring rounded-sm text-sm transition-colors duration-300",
+                  active
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+                aria-current={active ? "page" : undefined}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -57,15 +95,23 @@ export function SiteHeader() {
   )
 }
 
-function Logo() {
+function Logo({ scrolled }: { scrolled: boolean }) {
   return (
     <span
       aria-hidden
-      className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface"
+      className={cn(
+        "flex items-center justify-center rounded-full border border-border bg-surface transition-all duration-500",
+        scrolled ? "h-6 w-6" : "h-7 w-7",
+        "group-hover:border-primary/40 group-hover:bg-surface-2",
+      )}
     >
       <svg
         viewBox="0 0 24 24"
-        className="h-4 w-4 text-primary"
+        className={cn(
+          "text-primary transition-all duration-500",
+          scrolled ? "h-3.5 w-3.5" : "h-4 w-4",
+          "group-hover:rotate-[-4deg]",
+        )}
         fill="none"
         stroke="currentColor"
         strokeWidth="1.6"
