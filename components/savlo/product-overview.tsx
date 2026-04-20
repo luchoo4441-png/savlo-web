@@ -1,5 +1,6 @@
 import { AnimatedNumber } from "./animated-number"
 import { Reveal } from "./reveal"
+import { Spotlight } from "./spotlight"
 
 export function ProductOverview() {
   return (
@@ -26,13 +27,14 @@ export function ProductOverview() {
           {/* Net worth card */}
           <Reveal delay={80} className="md:col-span-1">
             <article className="card-calm group relative h-full overflow-hidden rounded-2xl border border-border bg-surface/70 p-6">
-              <header className="flex items-center justify-between">
+              <Spotlight />
+              <header className="relative flex items-center justify-between">
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                   Net worth
                 </p>
                 <span className="text-[11px] text-muted-foreground">12m</span>
               </header>
-              <p className="mt-4 font-serif text-4xl tracking-tight">
+              <p className="relative mt-4 font-serif text-4xl tracking-tight tabular-nums">
                 <AnimatedNumber value={184320} prefix="$" duration={1800} />
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -50,8 +52,9 @@ export function ProductOverview() {
 
           {/* Cash flow timeline */}
           <Reveal delay={160} className="md:col-span-2">
-            <article className="card-calm relative h-full overflow-hidden rounded-2xl border border-border bg-surface/70 p-6">
-              <header className="flex items-center justify-between">
+            <article className="card-calm group relative h-full overflow-hidden rounded-2xl border border-border bg-surface/70 p-6">
+              <Spotlight size={440} />
+              <header className="relative flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     Cash flow · last 8 weeks
@@ -78,8 +81,9 @@ export function ProductOverview() {
 
           {/* Categories */}
           <Reveal delay={240} className="md:col-span-3">
-            <article className="card-calm relative h-full overflow-hidden rounded-2xl border border-border bg-surface/70 p-6">
-              <header className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+            <article className="card-calm group relative h-full overflow-hidden rounded-2xl border border-border bg-surface/70 p-6">
+              <Spotlight size={560} />
+              <header className="relative flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
                 <div>
                   <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                     Budget categories

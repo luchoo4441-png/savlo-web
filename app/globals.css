@@ -399,6 +399,186 @@
               0 20px 60px -30px color-mix(in oklch, var(--primary) 25%, transparent);
 }
 
+/* --- Premium utilities ---------------------------------------------- */
+
+/* Animated underline for nav / footer / inline links.
+   Draws from left on hover, retracts to right on leave. */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.9;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-underline:hover::after,
+.link-underline[data-active="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.link-underline[data-active="true"]::after {
+  background: var(--primary);
+}
+
+/* Cursor-follow sheen on primary buttons.
+   Parent must set --mx / --my from JS (or fall back to 50%). */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    180px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.22),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+.btn-sheen:hover::before {
+  opacity: 1;
+}
+.btn-sheen > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cursor-follow spotlight for cards.
+   Place a <Spotlight /> as first child of a relatively-positioned card. */
+.spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklch, var(--primary) 18%, transparent),
+    transparent 48%
+  );
+  mix-blend-mode: screen;
+  z-index: 0;
+}
+.group:hover > .spotlight,
+.spotlight-host:hover > .spotlight {
+  opacity: 1;
+}
+
+/* Per-line mask reveal for headlines.
+   Wrap each line in <span class="reveal-line"><span>text</span></span>. */
+@keyframes lineMaskUp {
+  from {
+    transform: translate3d(0, 110%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.05em; /* prevent descender clip */
+}
+.reveal-line > span {
+  display: block;
+  will-change: transform;
+  transform: translate3d(0, 110%, 0);
+  animation: lineMaskUp 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Calm, branded focus ring — on-demand. */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px color-mix(in oklch, var(--primary) 55%, transparent);
+}
+
+/* Scroll progress indicator (fixed top line) */
+.scroll-progress {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 2px;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--primary) 0%, transparent),
+    color-mix(in oklch, var(--primary) 85%, transparent) 40%,
+    var(--primary)
+  );
+  z-index: 60;
+  pointer-events: none;
+  transition: transform 120ms linear;
+}
+
+/* Premium check-in-circle draw for success states */
+@keyframes circleDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes checkDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.success-check circle {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: circleDraw 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.success-check path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: checkDraw 450ms cubic-bezier(0.22, 1, 0.36, 1) 500ms forwards;
+}
+
+/* Tiny loading dots for in-button spinners */
+@keyframes dotBounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+.loading-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: currentColor;
+  margin: 0 2px;
+  animation: dotBounce 1200ms ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) {
+  animation-delay: 160ms;
+}
+.loading-dots span:nth-child(3) {
+  animation-delay: 320ms;
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -406,5 +586,8 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .reveal-line > span {
+    transform: none !important;
   }
 }
